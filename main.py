@@ -36,5 +36,8 @@ def process_search(message):
     else:
         bot.send_message(user_id, "I\'m sorry. For your search we can\'t find news.")
 
+def main():
+    bot.polling()
 
-bot.polling()
+if __name__ == "__main__":
+    main()
