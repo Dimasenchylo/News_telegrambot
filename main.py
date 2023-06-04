@@ -14,14 +14,13 @@ def get_news_by_keyword(keyword):
     return articles[:5]
 
 
-def send_news(user_id, articles):
-    for article in articles:
+def send_news(user_id, articles, max_articles=5):
+    for i, article in enumerate(articles[:max_articles], start=1):
         title = article.get("title", "")
         description = article.get("description", "")
         url = article.get("url", "")
         news_text = f" {title}\n\n{description}\n\n {url}"
         bot.send_message(user_id, news_text)
-
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -206,9 +205,9 @@ def send_subscribed_news():
                 articles = get_news_by_category(category)
                 if articles:
                     send_news(user_id, articles)
-        time.sleep(3600)
+        time.sleep(86400)
 
 
 if __name__ == '__main__':
-    bot.polling()
     threading.Thread(target=send_subscribed_news).start()
+    bot.polling()
