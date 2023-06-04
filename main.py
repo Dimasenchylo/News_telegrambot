@@ -88,6 +88,39 @@ def get_top_news():
     articles = news_data.get("articles", [])
     return articles[:60]
 
+@bot.message_handler(commands=['categories'])
+def categories(message):
+    user_id = message.chat.id
+    user_states[user_id] = 'categories'
+    keyboard = types.InlineKeyboardMarkup()
+    business_button = types.InlineKeyboardButton("Business", callback_data='business')
+    entertainment_button = types.InlineKeyboardButton("Entertainment", callback_data='entertainment')
+    health_button = types.InlineKeyboardButton("Health", callback_data='health')
+    science_button = types.InlineKeyboardButton("Science", callback_data='science')
+    sports_button = types.InlineKeyboardButton("Sports", callback_data='sports')
+    technology_button = types.InlineKeyboardButton("Technology", callback_data='technology')
+    keyboard.row(business_button, entertainment_button)
+    keyboard.row(health_button, science_button)
+    keyboard.row(sports_button, technology_button)
+    bot.reply_to(message, "Choose a category:", reply_markup=keyboard)
+
+
+@bot.callback_query_handler(func=lambda call: call.data in ['business', 'entertainment', 'health', 'science', 'sports', 'technology'])
+def category_callback(call):
+    user_id = call.from_user.id
+    category = call.data
+    articles = get_news_by_category(category)
+    user_states[user_id] = {'news': articles, 'index': 0}
+    send_next_news(user_id)
+
+
+def get_news_by_category(category):
+    url = f"https://newsapi.org/v2/top-headlines?category={category}&country=us&apiKey={news_api}"
+    response = requests.get(url)
+    news_data = response.json()
+    articles = news_data.get("articles", [])
+    return articles[:60]
+
 def main():
     bot.polling()
 
