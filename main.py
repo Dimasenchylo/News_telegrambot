@@ -1,8 +1,6 @@
 import requests
 import telebot
-
-tg_bot_token=""
-news_api=''
+from keys import tg_bot_token , news_api
 
 bot = telebot.TeleBot(tg_bot_token)
 
