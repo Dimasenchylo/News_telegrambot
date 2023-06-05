@@ -30,6 +30,13 @@ Run main.py
 py main.py
 ```
 
+## Tests 
+
+To run tests, type
+```
+pytest
+```
+
 ## Commands
 
 - ```/start``` - Start the bot
@@ -39,11 +46,4 @@ py main.py
 - ```/subscribe``` - Subscribe to receive news updates for specific categories
 - ```/unsubscribe``` - Unsubscribe from receiving news updates for specific categories
 - ```/subscribes``` - View the categories you are subscribed to
-
-## Tests 
-
-To run tests, type
-```
-pytest
-```
 
