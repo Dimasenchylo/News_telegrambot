@@ -47,3 +47,6 @@ pytest
 - ```/unsubscribe``` - Unsubscribe from receiving news updates for specific categories
 - ```/subscribes``` - View the categories you are subscribed to
 
+## Example of using news bot
+
+![](https://github.com/Dimasenchylo/News_telegrambot/blob/AndrijShchegel/Gif.gif)
