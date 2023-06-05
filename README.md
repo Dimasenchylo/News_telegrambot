@@ -45,8 +45,8 @@ pytest
 - ```/categories``` -  Choose a category of news articles
 - ```/subscribe``` - Subscribe to receive news updates for specific categories
 - ```/unsubscribe``` - Unsubscribe from receiving news updates for specific categories
-- ```/subscribes``` - View the categories you are subscribed to
+- ```/subscriptions``` - View the categories you are subscribed to
 
 ## Example of using news bot
 
-![](https://github.com/Dimasenchylo/News_telegrambot/blob/AndrijShchegel/Gif.gif)
+![Gif](Gif.gif)
