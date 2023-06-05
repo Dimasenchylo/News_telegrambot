@@ -19,6 +19,10 @@ Clone repository
 ```
 git clone https://github.com/Dimasenchylo/News_telegrambot.git
 ```
+Install dependencies
+```
+pip install -r requirements.txt
+```
 Add your bot token and news API
 
 Run main.py
@@ -35,3 +39,11 @@ py main.py
 - ```/subscribe``` - Subscribe to receive news updates for specific categories
 - ```/unsubscribe``` - Unsubscribe from receiving news updates for specific categories
 - ```/subscribes``` - View the categories you are subscribed to
+
+## Tests 
+
+To run tests, type
+```
+pytest
+```
+
