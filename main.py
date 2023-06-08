@@ -1,4 +1,4 @@
-from database import crsr_mysql, conn
+from database import crsr_mysql, conn, cursor_mysql, connection
 from response import get_response
 from keys import tg_bot_token
 from telebot import types
@@ -58,7 +58,8 @@ def send_next_news(user_id, articles, ifbutton=True):
         max_articles = 3
         index = 0
         send_news(user_id, articles, max_articles)
-        insert_advert(user_id)
+        if check_if_premium(user_id) == False:
+            insert_advert(user_id)
         if index < len(articles):
             # Next news button
             keyboard = types.InlineKeyboardMarkup()
@@ -247,6 +248,47 @@ def select(message):
     else:
         text = "No orders found inside the database."
         bot.send_message(user_id, text, parse_mode='html')
+
+# Check if user have premium
+def check_if_premium(user_id):
+    res = cursor_mysql.execute(f"SELECT * FROM `orders` WHERE `user_id` = {user_id} AND `premium` LIKE '1'")
+    if res:
+        return True
+    else:
+        return False
+
+# Command /subscribe_premium
+@bot.message_handler(commands=['subscribe_premium'])
+def subscribe_premium_handler(message):
+    user_id = message.chat.id
+    if check_if_premium(user_id) == False:
+        params = (user_id, True)
+        sql_command = "INSERT INTO orders VALUES (NULL, %s, %s);"
+        cursor_mysql.execute(sql_command, params)
+        connection.commit()
+        bot.send_message(user_id, "You successfully got a premium version.")
+    else:
+        bot.send_message(user_id, "You already have a premium version.")
+
+# Command /unsubscribe_premium
+@bot.message_handler(commands=['unsubscribe_premium'])
+def unsubscribe_premium_handler(message):
+    user_id = message.chat.id
+    if check_if_premium(user_id):
+        cursor_mysql.execute(f"DELETE FROM orders WHERE user_id = {user_id}")
+        connection.commit()
+        bot.send_message(user_id, "You have unsubscribed from premium version.")
+    else:
+        bot.send_message(user_id, "You do not have a premium version.")
+
+# Command /premium_status
+@bot.message_handler(commands=['premium_status'])
+def premium_status_handler(message):
+    user_id = message.chat.id
+    if check_if_premium(user_id):
+        bot.send_message(user_id, "You have an active premium version.")
+    else:
+        bot.send_message(user_id, "You do not have a premium version.")
 
 # Add advert to news
 def insert_advert(user_id):
