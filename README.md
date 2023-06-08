@@ -37,6 +37,12 @@ To run tests, type
 pytest
 ```
 
+## How to run database
+
+1) Download XAMPP and open it
+2) Start Apache and MySQL
+3) Run main.py
+
 ## Commands
 
 - ```/start``` - Start the bot
@@ -46,6 +52,11 @@ pytest
 - ```/subscribe``` - Subscribe to receive news updates for specific categories
 - ```/unsubscribe``` - Unsubscribe from receiving news updates for specific categories
 - ```/subscriptions``` - View the categories you are subscribed to
+- ```/advertisement``` - add your advertisement in database
+- ```/advertisement_database``` - see all database of advertisements
+- ```/subscribe_premium``` - subscribe premium
+- ```/unsubscribe_premium``` - unsubscribe premium
+- ```/premium_status``` - check your premium status
 
 ## Example of using news bot
 
