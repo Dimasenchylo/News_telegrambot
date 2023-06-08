@@ -1,9 +1,11 @@
+from database import crsr_mysql, conn
 from response import get_response
 from keys import tg_bot_token
 from telebot import types
 import threading
 import schedule
 import telebot
+import random
 import time
 
 
@@ -56,6 +58,7 @@ def send_next_news(user_id, articles, ifbutton=True):
         max_articles = 3
         index = 0
         send_news(user_id, articles, max_articles)
+        insert_advert(user_id)
         if index < len(articles):
             # Next news button
             keyboard = types.InlineKeyboardMarkup()
@@ -191,6 +194,79 @@ def schedule_loop():
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+# Command /advertisement
+@bot.message_handler(commands=['advertisement'])
+def search_news(message):
+    user_id = message.chat.id
+    user_states[user_id] = 'advertisement'
+    bot.reply_to(message, "Type your add: title description url")
+
+# Add user advertisement to database
+@bot.message_handler(func=lambda message: user_states.get(message.chat.id) == 'advertisement')
+def add(message):
+    list_of_words = message.text.split(" ")
+    user_id = message.chat.id
+    if list(list_of_words) != 3:
+        text = "Something went wrong, please try again"
+        bot.send_message(user_id, text, parse_mode='html')
+    else:
+        print (list_of_words)
+        title = list_of_words[0]
+        desqr = list_of_words[1]
+        url = list_of_words[2]
+        params = (title, desqr, url)
+        sql_command = "INSERT INTO orders VALUES (NULL, %s, %s, %s);"
+        crsr_mysql.execute(sql_command, params)
+        conn.commit()
+        text = "Order correctly inserted"
+        bot.send_message(user_id, text, parse_mode='html')
+        user_states[user_id] = None
+
+# Found information in database
+def search_database(database):
+    text = ""
+    for i in database:
+        id = i['id']
+        title = i['title']
+        descr = i['descr']
+        url = i['url']
+        text += "<b>"+ str(id) +"</b> | " + "<b>"+ str(title) +"</b> | " + "<b>"+ str(descr)+"</b> | " + "<b>"+ str(url)+"</b>\n"
+    message = "<b>Received 📖 </b> Information about advertisement:\n\n"+text
+    return message
+
+# Command /advertisement_database
+@bot.message_handler(commands=['advertisement_database'])
+def select(message):
+    user_id = message.chat.id
+    crsr_mysql.execute("SELECT * FROM orders")
+    res = crsr_mysql.fetchall()
+    if(res):
+        text = search_database(res)
+        bot.send_message(user_id, text, parse_mode='html')
+    else:
+        text = "No orders found inside the database."
+        bot.send_message(user_id, text, parse_mode='html')
+
+# Add advert to news
+def insert_advert(user_id):
+    crsr_mysql.execute("SELECT MAX(id) FROM orders")
+    res = crsr_mysql.fetchone()
+    max = res['MAX(id)']
+    if max == None:
+        return
+    random_advert = random.randint(1, max)
+    crsr_mysql.execute(f"SELECT * FROM `orders` WHERE `id` = {random_advert}")
+    res = crsr_mysql.fetchall()
+    if(res):
+        text = ""
+        title = res[0]['title']
+        descr = res[0]['descr']
+        url = res[0]['url']
+        text += f" {title}\n\n{descr}\n\n {url}"
+        bot.send_message(user_id, text, parse_mode='html')
+    else:
+        return
 
 # Start bot
 if __name__ == '__main__':
